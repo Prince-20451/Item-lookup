@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Zoho Item Lookup</title>
+<style>
+  :root {
+    --bg: #f4f6f8;
+    --card-bg: #ffffff;
+    --border: #e1e5ea;
+    --text: #1f2933;
+    --text-muted: #6b7684;
+    --primary: #3f6fdb;
+    --primary-hover: #3159b8;
+    --danger: #c0392b;
+    --danger-bg: #fdecea;
+    --success-bg: #eefaf1;
+    --success-border: #b7e4c7;
+    --radius: 10px;
+    --shadow: 0 1px 3px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(16, 24, 40, 0.04);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 24px 16px 64px;
+  }
+
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    margin: 0 0 4px;
+  }
+
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin: 0 0 24px;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .card h2 {
+    font-size: 1rem;
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  input[type="text"] {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: #fff;
+    color: var(--text);
+    width: 100%;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(63, 111, 219, 0.15);
+  }
+
+  .search-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .search-row input {
+    flex: 1;
+  }
+
+  button {
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 10px 20px;
+    background: var(--primary);
+    color: #fff;
+    transition: background 0.15s ease;
+    white-space: nowrap;
+  }
+
+  button:hover { background: var(--primary-hover); }
+  button:disabled {
+    background: #a7b6d6;
+    cursor: not-allowed;
+  }
+
+  .status {
+    margin-top: 14px;
+    font-size: 0.9rem;
+  }
+
+  .status.error {
+    background: var(--danger-bg);
+    color: var(--danger);
+    border: 1px solid #f5c6c2;
+    padding: 12px 14px;
+    border-radius: 8px;
+  }
+
+  .status.info {
+    color: var(--text-muted);
+  }
+
+  .not-available {
+    background: var(--danger-bg);
+    border: 1px solid #f5c6c2;
+    color: var(--danger);
+    padding: 18px;
+    border-radius: var(--radius);
+    text-align: center;
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+
+  .result-card {
+    background: var(--card-bg);
+    border: 1px solid var(--success-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .result-header {
+    background: var(--success-bg);
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--success-border);
+  }
+
+  .result-header .item-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 0 2px;
+  }
+
+  .result-header .item-sub {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+  }
+
+  @media (max-width: 520px) {
+    .detail-grid { grid-template-columns: 1fr; }
+  }
+
+  .detail-item {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .detail-item .label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+  }
+
+  .detail-item .value {
+    font-size: 0.95rem;
+    word-break: break-word;
+  }
+
+  .detail-item .value.empty {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin-right: 8px;
+    vertical-align: -2px;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Zoho Item Lookup</h1>
+
+  <div class="card">
+    <h2>Search</h2>
+    <div class="search-row">
+      <input type="text" id="itemNumber" placeholder="Enter Item Number (SKU)" autocomplete="off" />
+      <button id="searchBtn">Search</button>
+    </div>
+    <div id="status"></div>
+  </div>
+
+  <div id="resultArea"></div>
+</div>
+
+<script>
+(function () {
+  const els = {
+    itemNumber: document.getElementById('itemNumber'),
+    searchBtn: document.getElementById('searchBtn'),
+    status: document.getElementById('status'),
+    resultArea: document.getElementById('resultArea'),
+  };
+
+  // Connection details come from a .env file next to this page, parsed at
+  // load time. Expected keys: ZOHO_ACCESS_TOKEN, ZOHO_REFRESH_TOKEN,
+  // CLIENT_ID, CLIENT_SECRET, ZOHO_ORG_ID, ZOHO_DATA_CENTER.
+  let config = {
+    accessToken: '', refreshToken: '', clientId: '', clientSecret: '',
+    orgId: '', dataCenter: 'zohoapis.com',
+  };
+  let configError = '';
+
+  const ACCOUNTS_DOMAIN = {
+    'zohoapis.com': 'accounts.zoho.com',
+    'zohoapis.eu': 'accounts.zoho.eu',
+    'zohoapis.in': 'accounts.zoho.in',
+    'zohoapis.com.au': 'accounts.zoho.com.au',
+    'zohoapis.jp': 'accounts.zoho.jp',
+    'zohoapis.ca': 'accounts.zohocloud.ca',
+    'zohoapis.com.cn': 'accounts.zoho.com.cn',
+    'zohoapis.sa': 'accounts.zoho.sa',
+  };
+
+  const TOKEN_REFRESH_INTERVAL_MS = 40 * 60 * 1000; // 40 minutes
+
+  function parseEnv(text) {
+    const parsed = {};
+    text.split(/\r?\n/).forEach(line => {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) return;
+      const idx = trimmed.indexOf('=');
+      if (idx === -1) return;
+      const key = trimmed.slice(0, idx).trim();
+      let value = trimmed.slice(idx + 1).trim();
+      if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+        value = value.slice(1, -1);
+      }
+      parsed[key] = value;
+    });
+    return parsed;
+  }
+
+  async function loadConfig() {
+    try {
+      const res = await fetch('.env', { cache: 'no-store' });
+      if (!res.ok) {
+        configError = '.env file not found (HTTP ' + res.status + '). Add one next to index.html with ZOHO_ACCESS_TOKEN, ZOHO_ORG_ID, and ZOHO_DATA_CENTER.';
+        return;
+      }
+      const env = parseEnv(await res.text());
+      config.accessToken = env.ZOHO_ACCESS_TOKEN || '';
+      config.refreshToken = env.ZOHO_REFRESH_TOKEN || '';
+      config.clientId = env.CLIENT_ID || '';
+      config.clientSecret = env.CLIENT_SECRET || '';
+      config.orgId = env.ZOHO_ORG_ID || '';
+      config.dataCenter = env.ZOHO_DATA_CENTER || 'zohoapis.com';
+      if (!config.accessToken || !config.orgId) {
+        configError = '.env is missing ZOHO_ACCESS_TOKEN or ZOHO_ORG_ID.';
+      }
+    } catch (e) {
+      configError = 'Could not load .env: ' + e.message + '. Make sure the page is served over http(s), not opened as a local file.';
+    }
+  }
+
+  function setTokenStatus(message) {
+    const el = document.getElementById('tokenStatus');
+    if (el) el.textContent = message;
+  }
+
+  async function refreshAccessToken() {
+    if (!config.refreshToken || !config.clientId || !config.clientSecret) {
+      setTokenStatus('Token auto-refresh skipped: missing ZOHO_REFRESH_TOKEN / CLIENT_ID / CLIENT_SECRET in .env.');
+      return;
+    }
+    const accountsDomain = ACCOUNTS_DOMAIN[config.dataCenter] || 'accounts.zoho.com';
+    const params = new URLSearchParams({
+      refresh_token: config.refreshToken,
+      client_id: config.clientId,
+      client_secret: config.clientSecret,
+      grant_type: 'refresh_token',
+    });
+    try {
+      const res = await fetch('https://' + accountsDomain + '/oauth/v2/token?' + params.toString(), {
+        method: 'POST',
+      });
+      const body = await res.json().catch(() => null);
+      if (!res.ok || !body || !body.access_token) {
+        const msg = (body && (body.error || body.message)) || ('HTTP ' + res.status);
+        setTokenStatus('Token refresh failed: ' + msg);
+        return;
+      }
+      config.accessToken = body.access_token;
+      configError = '';
+      setTokenStatus('Access token refreshed at ' + new Date().toLocaleTimeString() + '.');
+    } catch (e) {
+      setTokenStatus('Token refresh failed (likely blocked by CORS from the browser): ' + e.message);
+    }
+  }
+
+  function setStatus(message, type) {
+    els.status.innerHTML = '';
+    if (!message) return;
+    const div = document.createElement('div');
+    div.className = 'status' + (type ? ' ' + type : '');
+    div.textContent = message;
+    els.status.appendChild(div);
+  }
+
+  function setLoading(isLoading) {
+    els.searchBtn.disabled = isLoading;
+    els.searchBtn.innerHTML = isLoading ? '<span class="spinner"></span>Searching…' : 'Search';
+  }
+
+  function titleCase(key) {
+    return key
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  function formatValue(value) {
+    if (value === null || value === undefined || value === '') return { text: '—', empty: true };
+    if (typeof value === 'boolean') return { text: value ? 'Yes' : 'No', empty: false };
+    if (Array.isArray(value)) {
+      if (value.length === 0) return { text: '—', empty: true };
+      if (value.every(v => typeof v !== 'object')) return { text: value.join(', '), empty: false };
+      return { text: JSON.stringify(value, null, 2), empty: false, pre: true };
+    }
+    if (typeof value === 'object') {
+      const keys = Object.keys(value);
+      if (keys.length === 0) return { text: '—', empty: true };
+      return { text: JSON.stringify(value, null, 2), empty: false, pre: true };
+    }
+    return { text: String(value), empty: false };
+  }
+
+  // Fields we skip because they are internal/noisy and not useful to display
+  const SKIP_FIELDS = new Set(['custom_field_hash']);
+
+  function renderItem(item) {
+    els.resultArea.innerHTML = '';
+
+    const card = document.createElement('div');
+    card.className = 'result-card';
+
+    const header = document.createElement('div');
+    header.className = 'result-header';
+    const name = document.createElement('p');
+    name.className = 'item-name';
+    name.textContent = item.name || item.item_name || 'Unnamed Item';
+    const sub = document.createElement('p');
+    sub.className = 'item-sub';
+    sub.textContent = 'SKU: ' + (item.sku || '—') + '  ·  Item ID: ' + (item.item_id || '—');
+    header.appendChild(name);
+    header.appendChild(sub);
+    card.appendChild(header);
+
+    const grid = document.createElement('div');
+    grid.className = 'detail-grid';
+
+    const entries = Object.entries(item).filter(([key]) => !SKIP_FIELDS.has(key));
+
+    entries.forEach(([key, val]) => {
+      const formatted = formatValue(val);
+      const wrap = document.createElement('div');
+      wrap.className = 'detail-item';
+
+      const label = document.createElement('div');
+      label.className = 'label';
+      label.textContent = titleCase(key);
+
+      const value = document.createElement('div');
+      value.className = 'value' + (formatted.empty ? ' empty' : '');
+      if (formatted.pre) {
+        const pre = document.createElement('pre');
+        pre.style.margin = '0';
+        pre.style.whiteSpace = 'pre-wrap';
+        pre.style.fontSize = '0.82rem';
+        pre.textContent = formatted.text;
+        value.appendChild(pre);
+      } else {
+        value.textContent = formatted.text;
+      }
+
+      wrap.appendChild(label);
+      wrap.appendChild(value);
+      grid.appendChild(wrap);
+    });
+
+    card.appendChild(grid);
+    els.resultArea.appendChild(card);
+  }
+
+  function renderNotAvailable() {
+    els.resultArea.innerHTML = '';
+    const div = document.createElement('div');
+    div.className = 'not-available';
+    div.textContent = 'Item Not Available';
+    els.resultArea.appendChild(div);
+  }
+
+  async function zohoRequest(url, token) {
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization: 'Zoho-oauthtoken ' + token,
+      },
+    });
+    let body = null;
+    try { body = await res.json(); } catch (e) { /* non-JSON response */ }
+    return { ok: res.ok && body !== null, status: res.status, body };
+  }
+
+  async function searchItem() {
+    const token = config.accessToken;
+    const orgId = config.orgId;
+    const dc = config.dataCenter;
+    const itemNumber = els.itemNumber.value.trim();
+
+    els.resultArea.innerHTML = '';
+
+    if (!token || !orgId) {
+      setStatus(configError || 'Missing Zoho credentials. Check the .env file next to index.html.', 'error');
+      return;
+    }
+    if (!itemNumber) {
+      setStatus('Please enter an Item Number to search.', 'error');
+      return;
+    }
+
+    setStatus('');
+    setLoading(true);
+
+    try {
+      const base = 'https://www.' + dc + '/books/v3/items';
+      const listUrl = base + '?organization_id=' + encodeURIComponent(orgId) +
+        '&sku=' + encodeURIComponent(itemNumber);
+
+      let result = await zohoRequest(listUrl, token);
+
+      if (!result.ok) {
+        handleApiError(result);
+        return;
+      }
+
+      let items = (result.body && result.body.items) || [];
+
+      // Fallback: exact sku filter can miss items indexed under item_name;
+      // retry with a general text search and match locally.
+      if (items.length === 0) {
+        const searchUrl = base + '?organization_id=' + encodeURIComponent(orgId) +
+          '&search_text=' + encodeURIComponent(itemNumber);
+        result = await zohoRequest(searchUrl, token);
+        if (!result.ok) {
+          handleApiError(result);
+          return;
+        }
+        const candidates = (result.body && result.body.items) || [];
+        items = candidates.filter(it =>
+          (it.sku && it.sku.toLowerCase() === itemNumber.toLowerCase()) ||
+          (it.name && it.name.toLowerCase() === itemNumber.toLowerCase())
+        );
+      }
+
+      if (items.length === 0) {
+        renderNotAvailable();
+        return;
+      }
+
+      const matched = items[0];
+      const detailUrl = base + '/' + matched.item_id + '?organization_id=' + encodeURIComponent(orgId);
+      const detailResult = await zohoRequest(detailUrl, token);
+
+      if (!detailResult.ok) {
+        handleApiError(detailResult);
+        return;
+      }
+
+      const fullItem = (detailResult.body && detailResult.body.item) || matched;
+      renderItem(fullItem);
+    } catch (err) {
+      setStatus(
+        'Network or CORS error: ' + err.message +
+        '. Note: Zoho requires this page\'s origin to be whitelisted as an Authorized JavaScript Origin in the API Console, and it must be served over http(s), not opened as a local file.',
+        'error'
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function handleApiError(result) {
+    const apiMessage = result.body && result.body.message;
+    if (result.status === 401) {
+      setStatus('Access token invalid or expired. Update ZOHO_ACCESS_TOKEN in the .env file and reload the page.', 'error');
+    } else if (result.status === 404) {
+      renderNotAvailable();
+    } else {
+      setStatus('Zoho API error (' + result.status + '): ' + (apiMessage || 'Unknown error'), 'error');
+    }
+  }
+
+  els.searchBtn.addEventListener('click', searchItem);
+  els.itemNumber.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') searchItem();
+  });
+
+  loadConfig().then(refreshAccessToken).then(() => {
+    setInterval(refreshAccessToken, TOKEN_REFRESH_INTERVAL_MS);
+  });
+})();
+</script>
+</body>
+</html>
