@@ -41,12 +41,6 @@
     margin: 0 0 4px;
   }
 
-  .subtitle {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    margin: 0 0 24px;
-  }
-
   .card {
     background: var(--card-bg);
     border: 1px solid var(--border);
@@ -238,102 +232,6 @@
     resultArea: document.getElementById('resultArea'),
   };
 
-  // Connection details come from a .env file next to this page, parsed at
-  // load time. Expected keys: ZOHO_ACCESS_TOKEN, ZOHO_REFRESH_TOKEN,
-  // CLIENT_ID, CLIENT_SECRET, ZOHO_ORG_ID, ZOHO_DATA_CENTER.
-  let config = {
-    accessToken: '', refreshToken: '', clientId: '', clientSecret: '',
-    orgId: '', dataCenter: 'zohoapis.com',
-  };
-  let configError = '';
-
-  const ACCOUNTS_DOMAIN = {
-    'zohoapis.com': 'accounts.zoho.com',
-    'zohoapis.eu': 'accounts.zoho.eu',
-    'zohoapis.in': 'accounts.zoho.in',
-    'zohoapis.com.au': 'accounts.zoho.com.au',
-    'zohoapis.jp': 'accounts.zoho.jp',
-    'zohoapis.ca': 'accounts.zohocloud.ca',
-    'zohoapis.com.cn': 'accounts.zoho.com.cn',
-    'zohoapis.sa': 'accounts.zoho.sa',
-  };
-
-  const TOKEN_REFRESH_INTERVAL_MS = 40 * 60 * 1000; // 40 minutes
-
-  function parseEnv(text) {
-    const parsed = {};
-    text.split(/\r?\n/).forEach(line => {
-      const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith('#')) return;
-      const idx = trimmed.indexOf('=');
-      if (idx === -1) return;
-      const key = trimmed.slice(0, idx).trim();
-      let value = trimmed.slice(idx + 1).trim();
-      if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
-        value = value.slice(1, -1);
-      }
-      parsed[key] = value;
-    });
-    return parsed;
-  }
-
-  async function loadConfig() {
-    try {
-      const res = await fetch('.env', { cache: 'no-store' });
-      if (!res.ok) {
-        configError = '.env file not found (HTTP ' + res.status + '). Add one next to index.html with ZOHO_ACCESS_TOKEN, ZOHO_ORG_ID, and ZOHO_DATA_CENTER.';
-        return;
-      }
-      const env = parseEnv(await res.text());
-      config.accessToken = env.ZOHO_ACCESS_TOKEN || '';
-      config.refreshToken = env.ZOHO_REFRESH_TOKEN || '';
-      config.clientId = env.CLIENT_ID || '';
-      config.clientSecret = env.CLIENT_SECRET || '';
-      config.orgId = env.ZOHO_ORG_ID || '';
-      config.dataCenter = env.ZOHO_DATA_CENTER || 'zohoapis.com';
-      if (!config.accessToken || !config.orgId) {
-        configError = '.env is missing ZOHO_ACCESS_TOKEN or ZOHO_ORG_ID.';
-      }
-    } catch (e) {
-      configError = 'Could not load .env: ' + e.message + '. Make sure the page is served over http(s), not opened as a local file.';
-    }
-  }
-
-  function setTokenStatus(message) {
-    const el = document.getElementById('tokenStatus');
-    if (el) el.textContent = message;
-  }
-
-  async function refreshAccessToken() {
-    if (!config.refreshToken || !config.clientId || !config.clientSecret) {
-      setTokenStatus('Token auto-refresh skipped: missing ZOHO_REFRESH_TOKEN / CLIENT_ID / CLIENT_SECRET in .env.');
-      return;
-    }
-    const accountsDomain = ACCOUNTS_DOMAIN[config.dataCenter] || 'accounts.zoho.com';
-    const params = new URLSearchParams({
-      refresh_token: config.refreshToken,
-      client_id: config.clientId,
-      client_secret: config.clientSecret,
-      grant_type: 'refresh_token',
-    });
-    try {
-      const res = await fetch('https://' + accountsDomain + '/oauth/v2/token?' + params.toString(), {
-        method: 'POST',
-      });
-      const body = await res.json().catch(() => null);
-      if (!res.ok || !body || !body.access_token) {
-        const msg = (body && (body.error || body.message)) || ('HTTP ' + res.status);
-        setTokenStatus('Token refresh failed: ' + msg);
-        return;
-      }
-      config.accessToken = body.access_token;
-      configError = '';
-      setTokenStatus('Access token refreshed at ' + new Date().toLocaleTimeString() + '.');
-    } catch (e) {
-      setTokenStatus('Token refresh failed (likely blocked by CORS from the browser): ' + e.message);
-    }
-  }
-
   function setStatus(message, type) {
     els.status.innerHTML = '';
     if (!message) return;
@@ -435,30 +333,11 @@
     els.resultArea.appendChild(div);
   }
 
-  async function zohoRequest(url, token) {
-    const res = await fetch(url, {
-      method: 'GET',
-      headers: {
-        Authorization: 'Zoho-oauthtoken ' + token,
-      },
-    });
-    let body = null;
-    try { body = await res.json(); } catch (e) { /* non-JSON response */ }
-    return { ok: res.ok && body !== null, status: res.status, body };
-  }
-
   async function searchItem() {
-    const token = config.accessToken;
-    const orgId = config.orgId;
-    const dc = config.dataCenter;
     const itemNumber = els.itemNumber.value.trim();
 
     els.resultArea.innerHTML = '';
 
-    if (!token || !orgId) {
-      setStatus(configError || 'Missing Zoho credentials. Check the .env file next to index.html.', 'error');
-      return;
-    }
     if (!itemNumber) {
       setStatus('Please enter an Item Number to search.', 'error');
       return;
@@ -468,81 +347,29 @@
     setLoading(true);
 
     try {
-      const base = 'https://www.' + dc + '/books/v3/items';
-      const listUrl = base + '?organization_id=' + encodeURIComponent(orgId) +
-        '&sku=' + encodeURIComponent(itemNumber);
+      const res = await fetch('/api/item?number=' + encodeURIComponent(itemNumber));
+      const body = await res.json().catch(() => null);
 
-      let result = await zohoRequest(listUrl, token);
-
-      if (!result.ok) {
-        handleApiError(result);
-        return;
-      }
-
-      let items = (result.body && result.body.items) || [];
-
-      // Fallback: exact sku filter can miss items indexed under item_name;
-      // retry with a general text search and match locally.
-      if (items.length === 0) {
-        const searchUrl = base + '?organization_id=' + encodeURIComponent(orgId) +
-          '&search_text=' + encodeURIComponent(itemNumber);
-        result = await zohoRequest(searchUrl, token);
-        if (!result.ok) {
-          handleApiError(result);
-          return;
-        }
-        const candidates = (result.body && result.body.items) || [];
-        items = candidates.filter(it =>
-          (it.sku && it.sku.toLowerCase() === itemNumber.toLowerCase()) ||
-          (it.name && it.name.toLowerCase() === itemNumber.toLowerCase())
-        );
-      }
-
-      if (items.length === 0) {
+      if (res.status === 404) {
         renderNotAvailable();
         return;
       }
-
-      const matched = items[0];
-      const detailUrl = base + '/' + matched.item_id + '?organization_id=' + encodeURIComponent(orgId);
-      const detailResult = await zohoRequest(detailUrl, token);
-
-      if (!detailResult.ok) {
-        handleApiError(detailResult);
+      if (!res.ok) {
+        setStatus('Error: ' + ((body && body.error) || ('HTTP ' + res.status)), 'error');
         return;
       }
 
-      const fullItem = (detailResult.body && detailResult.body.item) || matched;
-      renderItem(fullItem);
+      renderItem(body.item);
     } catch (err) {
-      setStatus(
-        'Network or CORS error: ' + err.message +
-        '. Note: Zoho requires this page\'s origin to be whitelisted as an Authorized JavaScript Origin in the API Console, and it must be served over http(s), not opened as a local file.',
-        'error'
-      );
+      setStatus('Network error: ' + err.message, 'error');
     } finally {
       setLoading(false);
-    }
-  }
-
-  function handleApiError(result) {
-    const apiMessage = result.body && result.body.message;
-    if (result.status === 401) {
-      setStatus('Access token invalid or expired. Update ZOHO_ACCESS_TOKEN in the .env file and reload the page.', 'error');
-    } else if (result.status === 404) {
-      renderNotAvailable();
-    } else {
-      setStatus('Zoho API error (' + result.status + '): ' + (apiMessage || 'Unknown error'), 'error');
     }
   }
 
   els.searchBtn.addEventListener('click', searchItem);
   els.itemNumber.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') searchItem();
-  });
-
-  loadConfig().then(refreshAccessToken).then(() => {
-    setInterval(refreshAccessToken, TOKEN_REFRESH_INTERVAL_MS);
   });
 })();
 </script>
