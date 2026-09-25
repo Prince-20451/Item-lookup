@@ -6,19 +6,30 @@
 <title>Zoho Item Lookup</title>
 <style>
   :root {
-    --bg: #f4f6f8;
+    --bg: #eef0f6;
     --card-bg: #ffffff;
-    --border: #e1e5ea;
-    --text: #1f2933;
-    --text-muted: #6b7684;
-    --primary: #3f6fdb;
-    --primary-hover: #3159b8;
+    --card-bg-subtle: #f7f8fc;
+    --border: #e4e7f0;
+    --text: #1a1d29;
+    --text-muted: #656b7a;
+    --text-faint: #9499a8;
+    --primary: #4f46e5;
+    --primary-dark: #4338ca;
+    --primary-tint: #eef0fe;
+    --accent: #7c3aed;
     --danger: #c0392b;
     --danger-bg: #fdecea;
-    --success-bg: #eefaf1;
-    --success-border: #b7e4c7;
-    --radius: 10px;
-    --shadow: 0 1px 3px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(16, 24, 40, 0.04);
+    --danger-border: #f5c6c2;
+    --success: #0f9d58;
+    --success-bg: #e8f8ef;
+    --success-border: #bfe8d1;
+    --amber: #b7791f;
+    --amber-bg: #fdf3e0;
+    --radius-lg: 20px;
+    --radius: 14px;
+    --radius-sm: 10px;
+    --shadow-lg: 0 20px 40px -12px rgba(79, 70, 229, 0.25);
+    --shadow: 0 4px 16px rgba(20, 24, 40, 0.06);
   }
 
   * { box-sizing: border-box; }
@@ -26,45 +37,121 @@
   body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: var(--bg);
+    background:
+      radial-gradient(900px 500px at 100% -10%, rgba(124, 58, 237, 0.10), transparent),
+      radial-gradient(700px 400px at -10% 10%, rgba(79, 70, 229, 0.08), transparent),
+      var(--bg);
     color: var(--text);
-    padding: 24px 16px 64px;
+    padding: 40px 16px 72px;
   }
 
   .container {
-    max-width: 760px;
+    max-width: 780px;
     margin: 0 auto;
   }
 
-  h1 {
-    font-size: 1.5rem;
-    margin: 0 0 4px;
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    background: linear-gradient(135deg, #4f46e5 0%, #6d28d9 55%, #7c3aed 100%);
+    border-radius: var(--radius-lg);
+    padding: 40px 32px 34px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    margin-bottom: 22px;
   }
 
-  .card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 20px;
-    margin-bottom: 20px;
+  .hero::before,
+  .hero::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
   }
 
-  .card h2 {
-    font-size: 1rem;
-    margin: 0 0 14px;
+  .hero::before {
+    width: 260px;
+    height: 260px;
+    top: -120px;
+    right: -60px;
+  }
+
+  .hero::after {
+    width: 160px;
+    height: 160px;
+    bottom: -90px;
+    left: -40px;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .hero-top {
+    position: relative;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    user-select: none;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+
+  .hero-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.16);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .hero h1 {
+    color: #fff;
+    font-size: 1.55rem;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  .hero p.tagline {
+    position: relative;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.92rem;
+    margin: 0 0 24px;
+    max-width: 46ch;
+  }
+
+  .search-box {
+    position: relative;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: var(--radius);
+    padding: 10px;
+    backdrop-filter: blur(4px);
+  }
+
+  .search-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .search-row .input-wrap {
+    position: relative;
+    flex: 1;
+  }
+
+  .search-row .input-wrap svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-faint);
+    pointer-events: none;
   }
 
   input[type="text"] {
-    padding: 10px 12px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 0.95rem;
+    padding: 13px 14px 13px 40px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.98rem;
     background: #fff;
     color: var(--text);
     width: 100%;
@@ -72,155 +159,404 @@
 
   input:focus {
     outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(63, 111, 219, 0.15);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.45);
   }
 
-  .search-row {
-    display: flex;
-    gap: 10px;
-  }
-
-  .search-row input {
-    flex: 1;
-  }
-
-  button {
+  button#searchBtn {
     cursor: pointer;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     font-size: 0.95rem;
-    font-weight: 600;
-    padding: 10px 20px;
-    background: var(--primary);
-    color: #fff;
-    transition: background 0.15s ease;
+    font-weight: 700;
+    padding: 0 24px;
+    background: #fff;
+    color: var(--primary);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
   }
 
-  button:hover { background: var(--primary-hover); }
-  button:disabled {
-    background: #a7b6d6;
+  button#searchBtn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,0,0,0.18); }
+  button#searchBtn:active { transform: translateY(0); }
+  button#searchBtn:disabled {
+    background: rgba(255, 255, 255, 0.6);
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .hint-chip-row {
+    position: relative;
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  .hint-chip {
+    font-size: 0.76rem;
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    padding: 4px 11px;
   }
 
   .status {
     margin-top: 14px;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
+    line-height: 1.5;
   }
 
   .status.error {
-    background: var(--danger-bg);
+    background: #fff;
     color: var(--danger);
-    border: 1px solid #f5c6c2;
+    border: 1px solid var(--danger-border);
     padding: 12px 14px;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
   }
 
-  .status.info {
-    color: var(--text-muted);
-  }
-
-  .not-available {
-    background: var(--danger-bg);
-    border: 1px solid #f5c6c2;
-    color: var(--danger);
-    padding: 18px;
+  /* ---------- Empty / loading / not-found states ---------- */
+  .state-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 44px 28px;
     text-align: center;
-    font-size: 1.05rem;
-    font-weight: 600;
   }
 
+  .state-card .icon-ring {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: var(--primary-tint);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .state-card .title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 0 0 6px;
+  }
+
+  .state-card .desc {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin: 0 auto 22px;
+    max-width: 40ch;
+  }
+
+  .feature-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    text-align: left;
+    margin-top: 8px;
+  }
+
+  @media (max-width: 560px) {
+    .feature-row { grid-template-columns: 1fr; }
+  }
+
+  .feature-item {
+    background: var(--card-bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+  }
+
+  .feature-item .f-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: var(--primary-tint);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+
+  .feature-item .f-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin: 0 0 2px;
+  }
+
+  .feature-item .f-desc {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .state-card.not-found .icon-ring {
+    background: var(--danger-bg);
+    color: var(--danger);
+  }
+
+  .skeleton-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 26px;
+  }
+
+  .skel-line {
+    height: 12px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #edeef5 25%, #f7f7fb 37%, #edeef5 63%);
+    background-size: 400% 100%;
+    animation: shimmer 1.3s ease infinite;
+    margin-bottom: 12px;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 100% 50%; }
+    100% { background-position: 0 50%; }
+  }
+
+  /* ---------- Result card ---------- */
   .result-card {
     background: var(--card-bg);
-    border: 1px solid var(--success-border);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     overflow: hidden;
   }
 
   .result-header {
-    background: var(--success-bg);
-    padding: 18px 20px;
-    border-bottom: 1px solid var(--success-border);
+    background: linear-gradient(135deg, #f5f3ff 0%, #eef0fe 100%);
+    padding: 22px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .result-header .top-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
   }
 
   .result-header .item-name {
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin: 0 0 2px;
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin: 0 0 6px;
+    letter-spacing: -0.01em;
   }
 
-  .result-header .item-sub {
+  .result-header .item-meta {
+    font-size: 0.82rem;
     color: var(--text-muted);
-    font-size: 0.85rem;
   }
+
+  .result-header .item-meta .mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .pill.status-active { background: var(--success-bg); color: var(--success); }
+  .pill.status-inactive { background: var(--danger-bg); color: var(--danger); }
+  .pill .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  @media (max-width: 560px) {
+    .stat-row { grid-template-columns: 1fr 1fr; }
+  }
+
+  .stat-tile {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+  }
+
+  .stat-tile .stat-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-faint);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .stat-tile .stat-value {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 24px 8px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--primary);
+  }
+
+  .section-title svg { flex-shrink: 0; }
 
   .detail-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 0;
   }
 
-  @media (max-width: 520px) {
+  @media (max-width: 560px) {
     .detail-grid { grid-template-columns: 1fr; }
   }
 
   .detail-item {
-    padding: 12px 20px;
-    border-bottom: 1px solid var(--border);
+    padding: 8px 24px 12px;
   }
 
   .detail-item .label {
-    font-size: 0.75rem;
+    font-size: 0.73rem;
     text-transform: uppercase;
     letter-spacing: 0.03em;
-    color: var(--text-muted);
+    color: var(--text-faint);
     margin-bottom: 3px;
+    font-weight: 600;
   }
 
   .detail-item .value {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     word-break: break-word;
+    color: var(--text);
   }
 
   .detail-item .value.empty {
-    color: var(--text-muted);
-    font-style: italic;
+    color: var(--text-faint);
+  }
+
+  .detail-item .value pre {
+    margin: 0;
+    white-space: pre-wrap;
+    font-size: 0.76rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: var(--card-bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+  }
+
+  .result-footer {
+    padding: 14px 24px 20px;
   }
 
   .spinner {
     display: inline-block;
     width: 14px;
     height: 14px;
-    border: 2px solid rgba(255,255,255,0.4);
-    border-top-color: #fff;
+    border: 2px solid rgba(79, 70, 229, 0.25);
+    border-top-color: var(--primary);
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
-    margin-right: 8px;
     vertical-align: -2px;
+  }
+
+  button#searchBtn .spinner {
+    border: 2px solid rgba(79, 70, 229, 0.25);
+    border-top-color: var(--primary);
   }
 
   @keyframes spin {
     to { transform: rotate(360deg); }
   }
+
+  .footer-note {
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 0.76rem;
+    margin-top: 24px;
+  }
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>Zoho Item Lookup</h1>
 
-  <div class="card">
-    <h2>Search</h2>
-    <div class="search-row">
-      <input type="text" id="itemNumber" placeholder="Enter Item Number (SKU)" autocomplete="off" />
-      <button id="searchBtn">Search</button>
+  <div class="hero">
+    <div class="hero-top">
+      <span class="hero-icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73z"></path><polyline points="3.29 7 12 12 20.71 7"></polyline><line x1="12" y1="22" x2="12" y2="12"></line></svg>
+      </span>
+      <h1>Zoho Item Lookup</h1>
+    </div>
+    <p class="tagline">Look up any item in Zoho Books by its item number and see everything about it — pricing, stock, tax, and more — in one place.</p>
+
+    <div class="search-box">
+      <div class="search-row">
+        <div class="input-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" id="itemNumber" placeholder="Enter Item Number (SKU)" autocomplete="off" />
+        </div>
+        <button id="searchBtn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          Search
+        </button>
+      </div>
     </div>
     <div id="status"></div>
   </div>
 
-  <div id="resultArea"></div>
+  <div id="resultArea">
+    <div class="state-card">
+      <div class="icon-ring" aria-hidden="true">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </div>
+      <p class="title">Search for an item to get started</p>
+      <p class="desc">Enter an item number above and hit Search — full details from Zoho Books will show up right here.</p>
+
+      <div class="feature-row">
+        <div class="feature-item">
+          <div class="f-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"></path></svg></div>
+          <p class="f-title">Live data</p>
+          <p class="f-desc">Pulled straight from Zoho Books, every search.</p>
+        </div>
+        <div class="feature-item">
+          <div class="f-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg></div>
+          <p class="f-title">Full detail</p>
+          <p class="f-desc">Pricing, tax, stock and more — organized clearly.</p>
+        </div>
+        <div class="feature-item">
+          <div class="f-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+          <p class="f-title">Instant</p>
+          <p class="f-desc">Results in a second or two, no digging in Zoho.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="footer-note">Connected to Zoho Books · Data refreshes on every search</p>
 </div>
 
 <script>
@@ -231,6 +567,8 @@
     status: document.getElementById('status'),
     resultArea: document.getElementById('resultArea'),
   };
+
+  const SEARCH_ICON_SVG = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
 
   function setStatus(message, type) {
     els.status.innerHTML = '';
@@ -243,7 +581,17 @@
 
   function setLoading(isLoading) {
     els.searchBtn.disabled = isLoading;
-    els.searchBtn.innerHTML = isLoading ? '<span class="spinner"></span>Searching…' : 'Search';
+    els.searchBtn.innerHTML = isLoading ? '<span class="spinner"></span>Searching…' : (SEARCH_ICON_SVG + 'Search');
+    if (isLoading) {
+      els.resultArea.innerHTML =
+        '<div class="skeleton-card">' +
+        '<div class="skel-line" style="width:45%;height:20px;margin-bottom:16px;"></div>' +
+        '<div class="skel-line" style="width:70%"></div>' +
+        '<div class="skel-line" style="width:55%"></div>' +
+        '<div class="skel-line" style="width:80%"></div>' +
+        '<div class="skel-line" style="width:40%;margin-bottom:0;"></div>' +
+        '</div>';
+    }
   }
 
   function titleCase(key) {
@@ -268,8 +616,98 @@
     return { text: String(value), empty: false };
   }
 
-  // Fields we skip because they are internal/noisy and not useful to display
-  const SKIP_FIELDS = new Set(['custom_field_hash']);
+  function formatDate(value) {
+    if (!value) return { text: '—', empty: true };
+    const d = new Date(value);
+    if (isNaN(d.getTime())) return { text: String(value), empty: false };
+    return { text: d.toLocaleString(), empty: false };
+  }
+
+  // Fields excluded entirely: internal ids/noise, or already shown in the header/stat row.
+  const SKIP_FIELDS = new Set([
+    'custom_field_hash', 'item_id', 'name', 'item_name', 'sku', 'status',
+    'rate', 'stock_on_hand', 'group_id', 'zcrm_product_id', 'crm_owner_id',
+    'is_linked_with_zohocrm', 'item_code', 'lock_details', 'lock_detail',
+    'locked_actions', 'locked_fields',
+  ]);
+
+  const ICONS = {
+    General: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>',
+    'Pricing & Tax': '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>',
+    'Inventory & Stock': '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73z"></path><polyline points="3.29 7 12 12 20.71 7"></polyline><line x1="12" y1="22" x2="12" y2="12"></line></svg>',
+    Identifiers: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2.59 12.58V2h10.58l8 8a2 2 0 0 1 0 2.83z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>',
+    'Dimensions & Weight': '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18M9 21V9"></path></svg>',
+    Other: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle></svg>',
+    'Additional Details': '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>',
+  };
+
+  const FIELD_GROUPS = [
+    { title: 'General', keys: ['description', 'brand', 'manufacturer', 'unit', 'item_type', 'product_type', 'hsn_or_sac', 'source'] },
+    { title: 'Pricing & Tax', keys: ['purchase_rate', 'is_taxable', 'tax_name', 'tax_percentage', 'tax_exemption_code', 'tax_category_name', 'purchase_account_name', 'account_name'] },
+    { title: 'Inventory & Stock', keys: ['track_inventory', 'available_stock', 'actual_available_stock', 'available_for_sale', 'reorder_level', 'track_serial_number', 'track_batch_number'] },
+    { title: 'Identifiers', keys: ['upc', 'ean', 'isbn', 'part_number'] },
+    { title: 'Dimensions & Weight', keys: ['dimensions_with_unit', 'weight_with_unit', 'length', 'width', 'height', 'weight'] },
+    { title: 'Other', keys: ['can_be_sold', 'can_be_purchased', 'is_returnable', 'is_combo_product', 'vendor_name', 'purpose_of_use', 'tags', 'created_time', 'last_modified_time'] },
+  ];
+
+  const DATE_FIELDS = new Set(['created_time', 'last_modified_time']);
+
+  function buildDetailItem(key, val) {
+    const formatted = DATE_FIELDS.has(key) ? formatDate(val) : formatValue(val);
+    const wrap = document.createElement('div');
+    wrap.className = 'detail-item';
+
+    const label = document.createElement('div');
+    label.className = 'label';
+    label.textContent = titleCase(key);
+
+    const value = document.createElement('div');
+    value.className = 'value' + (formatted.empty ? ' empty' : '');
+    if (formatted.pre) {
+      const pre = document.createElement('pre');
+      pre.textContent = formatted.text;
+      value.appendChild(pre);
+    } else {
+      value.textContent = formatted.text;
+    }
+
+    wrap.appendChild(label);
+    wrap.appendChild(value);
+    return wrap;
+  }
+
+  function buildSection(title, keys, item) {
+    const present = keys.filter(k => Object.prototype.hasOwnProperty.call(item, k));
+    if (present.length === 0) return null;
+
+    const fragment = document.createDocumentFragment();
+
+    const heading = document.createElement('div');
+    heading.className = 'section-title';
+    heading.innerHTML = (ICONS[title] || '') + '<span>' + title + '</span>';
+    fragment.appendChild(heading);
+
+    const grid = document.createElement('div');
+    grid.className = 'detail-grid';
+    present.forEach(key => grid.appendChild(buildDetailItem(key, item[key])));
+    fragment.appendChild(grid);
+
+    return fragment;
+  }
+
+  function buildStatTile(label, value) {
+    const tile = document.createElement('div');
+    tile.className = 'stat-tile';
+    const l = document.createElement('div');
+    l.className = 'stat-label';
+    l.textContent = label;
+    const v = document.createElement('div');
+    v.className = 'stat-value';
+    v.textContent = value;
+    tile.appendChild(l);
+    tile.appendChild(v);
+    return tile;
+  }
 
   function renderItem(item) {
     els.resultArea.innerHTML = '';
@@ -279,64 +717,71 @@
 
     const header = document.createElement('div');
     header.className = 'result-header';
+
+    const topRow = document.createElement('div');
+    topRow.className = 'top-row';
+
+    const left = document.createElement('div');
     const name = document.createElement('p');
     name.className = 'item-name';
     name.textContent = item.name || item.item_name || 'Unnamed Item';
-    const sub = document.createElement('p');
-    sub.className = 'item-sub';
-    sub.textContent = 'SKU: ' + (item.sku || '—') + '  ·  Item ID: ' + (item.item_id || '—');
-    header.appendChild(name);
-    header.appendChild(sub);
+    const meta = document.createElement('div');
+    meta.className = 'item-meta';
+    meta.innerHTML = 'SKU <span class="mono">' + (item.sku || '—') + '</span> &nbsp;·&nbsp; ID <span class="mono">' + (item.item_id || '—') + '</span>';
+    left.appendChild(name);
+    left.appendChild(meta);
+    topRow.appendChild(left);
+
+    if (item.status) {
+      const isActive = String(item.status).toLowerCase() === 'active';
+      const pill = document.createElement('span');
+      pill.className = 'pill ' + (isActive ? 'status-active' : 'status-inactive');
+      pill.innerHTML = '<span class="dot"></span>' + titleCase(item.status);
+      topRow.appendChild(pill);
+    }
+
+    header.appendChild(topRow);
+
+    const statRow = document.createElement('div');
+    statRow.className = 'stat-row';
+    statRow.appendChild(buildStatTile('Rate', item.rate !== undefined && item.rate !== null && item.rate !== '' ? item.rate : '—'));
+    statRow.appendChild(buildStatTile('Stock on Hand', item.stock_on_hand !== undefined && item.stock_on_hand !== null && item.stock_on_hand !== '' ? item.stock_on_hand : '—'));
+    statRow.appendChild(buildStatTile('Type', item.item_type ? titleCase(item.item_type) : '—'));
+    header.appendChild(statRow);
+
     card.appendChild(header);
 
-    const grid = document.createElement('div');
-    grid.className = 'detail-grid';
-
-    const entries = Object.entries(item).filter(([key]) => !SKIP_FIELDS.has(key));
-
-    entries.forEach(([key, val]) => {
-      const formatted = formatValue(val);
-      const wrap = document.createElement('div');
-      wrap.className = 'detail-item';
-
-      const label = document.createElement('div');
-      label.className = 'label';
-      label.textContent = titleCase(key);
-
-      const value = document.createElement('div');
-      value.className = 'value' + (formatted.empty ? ' empty' : '');
-      if (formatted.pre) {
-        const pre = document.createElement('pre');
-        pre.style.margin = '0';
-        pre.style.whiteSpace = 'pre-wrap';
-        pre.style.fontSize = '0.82rem';
-        pre.textContent = formatted.text;
-        value.appendChild(pre);
-      } else {
-        value.textContent = formatted.text;
-      }
-
-      wrap.appendChild(label);
-      wrap.appendChild(value);
-      grid.appendChild(wrap);
+    const usedKeys = new Set(SKIP_FIELDS);
+    FIELD_GROUPS.forEach(group => {
+      const section = buildSection(group.title, group.keys, item);
+      group.keys.forEach(k => usedKeys.add(k));
+      if (section) card.appendChild(section);
     });
 
-    card.appendChild(grid);
+    const leftoverKeys = Object.keys(item).filter(k => !usedKeys.has(k));
+    const leftoverSection = buildSection('Additional Details', leftoverKeys, item);
+    if (leftoverSection) card.appendChild(leftoverSection);
+
+    card.appendChild(document.createElement('div')).className = 'result-footer';
+
     els.resultArea.appendChild(card);
   }
 
-  function renderNotAvailable() {
+  function renderNotAvailable(query) {
     els.resultArea.innerHTML = '';
     const div = document.createElement('div');
-    div.className = 'not-available';
-    div.textContent = 'Item Not Available';
+    div.className = 'state-card not-found';
+    div.innerHTML =
+      '<div class="icon-ring">' +
+      '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>' +
+      '</div>' +
+      '<p class="title">Item Not Available</p>' +
+      '<p class="desc">No item matching "' + query.replace(/</g, '&lt;') + '" was found in Zoho Books. Double-check the item number and try again.</p>';
     els.resultArea.appendChild(div);
   }
 
   async function searchItem() {
     const itemNumber = els.itemNumber.value.trim();
-
-    els.resultArea.innerHTML = '';
 
     if (!itemNumber) {
       setStatus('Please enter an Item Number to search.', 'error');
@@ -351,16 +796,18 @@
       const body = await res.json().catch(() => null);
 
       if (res.status === 404) {
-        renderNotAvailable();
+        renderNotAvailable(itemNumber);
         return;
       }
       if (!res.ok) {
+        els.resultArea.innerHTML = '';
         setStatus('Error: ' + ((body && body.error) || ('HTTP ' + res.status)), 'error');
         return;
       }
 
       renderItem(body.item);
     } catch (err) {
+      els.resultArea.innerHTML = '';
       setStatus('Network error: ' + err.message, 'error');
     } finally {
       setLoading(false);
