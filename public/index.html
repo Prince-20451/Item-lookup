@@ -517,7 +517,7 @@
       <div class="search-row">
         <div class="input-wrap">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          <input type="text" id="itemNumber" placeholder="Enter Item Number (SKU)" autocomplete="off" />
+          <input type="text" id="itemNumber" placeholder="Item name" autocomplete="off" />
         </div>
         <button id="searchBtn">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -534,7 +534,7 @@
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
       </div>
       <p class="title">Search for an item to get started</p>
-      <p class="desc">Enter an item number above and hit Search — full details from Zoho Books will show up right here.</p>
+      <p class="desc">Enter an item name above and hit Search — full details from Zoho Books will show up right here.</p>
 
       <div class="feature-row">
         <div class="feature-item">
@@ -776,7 +776,7 @@
       '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>' +
       '</div>' +
       '<p class="title">Item Not Available</p>' +
-      '<p class="desc">No item matching "' + query.replace(/</g, '&lt;') + '" was found in Zoho Books. Double-check the item number and try again.</p>';
+      '<p class="desc">No item matching "' + query.replace(/</g, '&lt;') + '" was found in Zoho Books. Double-check the item name and try again.</p>';
     els.resultArea.appendChild(div);
   }
 
@@ -784,7 +784,7 @@
     const itemNumber = els.itemNumber.value.trim();
 
     if (!itemNumber) {
-      setStatus('Please enter an Item Number to search.', 'error');
+      setStatus('Please enter an Item Name to search.', 'error');
       return;
     }
 
