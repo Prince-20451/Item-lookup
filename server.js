@@ -9,6 +9,7 @@ const {
   CLIENT_ID,
   CLIENT_SECRET,
   ZOHO_REFRESH_TOKEN,
+  INVENTORY_REFRESH_TOKEN,
   ZOHO_ORG_ID,
   ZOHO_DATA_CENTER = 'zohoapis.com',
 } = process.env;
@@ -81,6 +82,153 @@ async function zohoFetch(pathAndQuery, allowRetry = true) {
   return { ok: res.ok, status: res.status, body };
 }
 
+// --- Inventory API (separate OAuth scope, used only for serial number lookups) ---
+
+let cachedInventoryToken = null;
+let cachedInventoryTokenExpiry = 0;
+
+async function getInventoryAccessToken() {
+  if (cachedInventoryToken && Date.now() < cachedInventoryTokenExpiry) {
+    return cachedInventoryToken;
+  }
+  if (!CLIENT_ID || !CLIENT_SECRET || !INVENTORY_REFRESH_TOKEN) {
+    const err = new Error('Server is missing CLIENT_ID, CLIENT_SECRET, or INVENTORY_REFRESH_TOKEN environment variables.');
+    err.isConfigError = true;
+    throw err;
+  }
+
+  const accountsDomain = ACCOUNTS_DOMAIN[ZOHO_DATA_CENTER] || 'accounts.zoho.com';
+  const params = new URLSearchParams({
+    refresh_token: INVENTORY_REFRESH_TOKEN,
+    client_id: CLIENT_ID,
+    client_secret: CLIENT_SECRET,
+    grant_type: 'refresh_token',
+  });
+
+  const res = await fetch('https://' + accountsDomain + '/oauth/v2/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: params,
+  });
+  const body = await res.json().catch(() => null);
+
+  if (!res.ok || !body || !body.access_token) {
+    const msg = (body && (body.error || body.message)) || ('HTTP ' + res.status);
+    throw new Error('Zoho Inventory token refresh failed: ' + msg);
+  }
+
+  cachedInventoryToken = body.access_token;
+  cachedInventoryTokenExpiry = Date.now() + (Math.max(body.expires_in - 120, 60)) * 1000;
+  return cachedInventoryToken;
+}
+
+async function inventoryFetch(pathAndQuery, allowRetry = true) {
+  const token = await getInventoryAccessToken();
+  const res = await fetch('https://www.' + ZOHO_DATA_CENTER + pathAndQuery, {
+    headers: { Authorization: 'Zoho-oauthtoken ' + token },
+  });
+  const body = await res.json().catch(() => null);
+
+  if ((res.status === 401 || res.status === 403) && allowRetry) {
+    cachedInventoryToken = null;
+    cachedInventoryTokenExpiry = 0;
+    return inventoryFetch(pathAndQuery, false);
+  }
+
+  return { ok: res.ok, status: res.status, body };
+}
+
+// --- Serial number index ---
+// Zoho has no "find item by serial number" endpoint - only "list serial
+// numbers for a known item_id". With 2,000+ items, scanning all of them on
+// every search would be far too slow, so instead we build a local
+// serial-number -> item_id map in the background, and searches just look it
+// up. The index is rebuilt periodically to pick up newly added serials.
+
+let serialIndex = new Map(); // lowercase serial number -> { itemId, itemName, serialNumber }
+let serialIndexBuiltAt = 0;
+let serialIndexBuilding = false;
+
+async function fetchAllBooksItems() {
+  const items = [];
+  let page = 1;
+  for (;;) {
+    const qs = 'organization_id=' + encodeURIComponent(ZOHO_ORG_ID) + '&page=' + page + '&per_page=200';
+    const result = await zohoFetch('/books/v3/items?' + qs);
+    if (!result.ok) break;
+    const pageItems = (result.body && result.body.items) || [];
+    items.push(...pageItems);
+    const hasMore = result.body && result.body.page_context && result.body.page_context.has_more_page;
+    if (!hasMore) break;
+    page += 1;
+  }
+  return items;
+}
+
+async function fetchSerialNumbersForItem(itemId) {
+  const serials = [];
+  let page = 1;
+  for (;;) {
+    const qs = 'organization_id=' + encodeURIComponent(ZOHO_ORG_ID) + '&item_id=' + itemId + '&page=' + page + '&per_page=200';
+    const result = await inventoryFetch('/inventory/v1/items/serialnumbers?' + qs);
+    if (!result.ok) break;
+    const pageSerials = (result.body && result.body.serial_numbers) || [];
+    serials.push(...pageSerials);
+    const hasMore = result.body && result.body.page_context && result.body.page_context.has_more_page;
+    if (!hasMore) break;
+    page += 1;
+  }
+  return serials;
+}
+
+async function buildSerialIndex() {
+  if (serialIndexBuilding) return;
+  if (!CLIENT_ID || !CLIENT_SECRET || !INVENTORY_REFRESH_TOKEN || !ZOHO_ORG_ID) {
+    console.log('Serial number index skipped: INVENTORY_REFRESH_TOKEN not configured.');
+    return;
+  }
+
+  serialIndexBuilding = true;
+  const nextIndex = new Map();
+
+  try {
+    const allItems = await fetchAllBooksItems();
+    const trackedItems = allItems.filter(it => it.track_serial_number);
+
+    for (const item of trackedItems) {
+      try {
+        const serials = await fetchSerialNumbersForItem(item.item_id);
+        for (const s of serials) {
+          if (!s.serialnumber) continue;
+          nextIndex.set(s.serialnumber.toLowerCase(), {
+            itemId: item.item_id,
+            itemName: item.name,
+            serialNumber: s.serialnumber,
+          });
+        }
+      } catch (e) {
+        console.log('Serial number fetch failed for item ' + item.item_id + ': ' + e.message);
+      }
+    }
+
+    serialIndex = nextIndex;
+    serialIndexBuiltAt = Date.now();
+    console.log('Serial number index built: ' + serialIndex.size + ' serials across ' + trackedItems.length + ' items.');
+  } catch (e) {
+    console.log('Serial number index build failed: ' + e.message);
+  } finally {
+    serialIndexBuilding = false;
+  }
+}
+
+app.get('/api/serial-index-status', (req, res) => {
+  res.json({
+    size: serialIndex.size,
+    builtAt: serialIndexBuiltAt ? new Date(serialIndexBuiltAt).toISOString() : null,
+    building: serialIndexBuilding,
+  });
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/api/item', async (req, res) => {
@@ -116,21 +264,38 @@ app.get('/api/item', async (req, res) => {
       );
     }
 
+    let matchedBy = 'name_or_sku';
+    let matchedItemId = items[0] && items[0].item_id;
+
+    // Fallback: no match by SKU/name - check the serial number index.
     if (items.length === 0) {
+      const serialMatch = serialIndex.get(itemNumber.toLowerCase());
+      if (serialMatch) {
+        matchedBy = 'serial_number';
+        matchedItemId = serialMatch.itemId;
+      }
+    }
+
+    if (!matchedItemId) {
       return res.status(404).json({ error: 'not_found' });
     }
 
-    const detail = await zohoFetch('/books/v3/items/' + items[0].item_id + '?' + qs);
+    const detail = await zohoFetch('/books/v3/items/' + matchedItemId + '?' + qs);
     if (!detail.ok) {
       return res.status(detail.status).json({ error: (detail.body && detail.body.message) || 'Zoho API error' });
     }
 
-    res.json({ item: (detail.body && detail.body.item) || items[0] });
+    const responseItem = (detail.body && detail.body.item) || items[0];
+    res.json({ item: responseItem, matched_by: matchedBy });
   } catch (err) {
     res.status(err.isConfigError ? 500 : 502).json({ error: err.message });
   }
 });
 
+const SERIAL_INDEX_REBUILD_INTERVAL_MS = 30 * 60 * 1000; // 30 minutes
+
 app.listen(PORT, () => {
   console.log('Server running on port ' + PORT);
+  buildSerialIndex();
+  setInterval(buildSerialIndex, SERIAL_INDEX_REBUILD_INTERVAL_MS);
 });
