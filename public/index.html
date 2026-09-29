@@ -6,30 +6,29 @@
 <title>Zoho Item Lookup</title>
 <style>
   :root {
-    --bg: #eef0f6;
+    --bg: #eef0f8;
     --card-bg: #ffffff;
     --card-bg-subtle: #f7f8fc;
-    --border: #e4e7f0;
-    --text: #1a1d29;
+    --border: #e5e7f0;
+    --text: #171923;
     --text-muted: #656b7a;
     --text-faint: #9499a8;
     --primary: #4f46e5;
     --primary-dark: #4338ca;
     --primary-tint: #eef0fe;
-    --accent: #7c3aed;
     --danger: #c0392b;
     --danger-bg: #fdecea;
     --danger-border: #f5c6c2;
     --success: #0f9d58;
     --success-bg: #e8f8ef;
-    --success-border: #bfe8d1;
+    --blue: #2563eb;
+    --blue-bg: #eaf1fe;
     --amber: #b7791f;
     --amber-bg: #fdf3e0;
-    --radius-lg: 20px;
+    --radius-lg: 18px;
     --radius: 14px;
     --radius-sm: 10px;
-    --shadow-lg: 0 20px 40px -12px rgba(79, 70, 229, 0.25);
-    --shadow: 0 4px 16px rgba(20, 24, 40, 0.06);
+    --shadow: 0 2px 10px rgba(23, 25, 35, 0.06);
   }
 
   * { box-sizing: border-box; }
@@ -37,108 +36,71 @@
   body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background:
-      radial-gradient(900px 500px at 100% -10%, rgba(124, 58, 237, 0.10), transparent),
-      radial-gradient(700px 400px at -10% 10%, rgba(79, 70, 229, 0.08), transparent),
-      var(--bg);
+    background: var(--bg);
     color: var(--text);
-    padding: 40px 16px 72px;
+    padding: 24px 16px 60px;
+    font-size: 14px;
   }
 
   .container {
-    max-width: 780px;
+    max-width: 1200px;
     margin: 0 auto;
   }
 
-  /* ---------- Hero ---------- */
-  .hero {
-    position: relative;
-    background: linear-gradient(135deg, #4f46e5 0%, #6d28d9 55%, #7c3aed 100%);
-    border-radius: var(--radius-lg);
-    padding: 40px 32px 34px;
-    box-shadow: var(--shadow-lg);
-    overflow: hidden;
+  /* ---------- Top bar ---------- */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
     margin-bottom: 22px;
   }
 
-  .hero::before,
-  .hero::after {
-    content: "";
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.08);
-  }
-
-  .hero::before {
-    width: 260px;
-    height: 260px;
-    top: -120px;
-    right: -60px;
-  }
-
-  .hero::after {
-    width: 160px;
-    height: 160px;
-    bottom: -90px;
-    left: -40px;
-    background: rgba(255, 255, 255, 0.06);
-  }
-
-  .hero-top {
-    position: relative;
+  .topbar-left {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 6px;
   }
 
-  .hero-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 11px;
-    background: rgba(255, 255, 255, 0.16);
+  .icon-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+    background: var(--primary-tint);
+    color: var(--primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
     flex-shrink: 0;
   }
 
-  .hero h1 {
-    color: #fff;
-    font-size: 1.55rem;
+  .topbar h1 {
+    font-size: 1.4rem;
     margin: 0;
     letter-spacing: -0.01em;
   }
 
-  .hero p.tagline {
-    position: relative;
-    color: rgba(255, 255, 255, 0.82);
-    font-size: 0.92rem;
-    margin: 0 0 24px;
-    max-width: 46ch;
+  .topbar .subtitle {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin: 2px 0 0;
   }
 
-  .search-box {
-    position: relative;
-    background: rgba(255, 255, 255, 0.14);
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    border-radius: var(--radius);
-    padding: 10px;
-    backdrop-filter: blur(4px);
-  }
-
-  .search-row {
+  .topbar-search {
     display: flex;
     gap: 8px;
+    flex: 1;
+    max-width: 560px;
+    min-width: 260px;
   }
 
-  .search-row .input-wrap {
+  .input-wrap {
     position: relative;
     flex: 1;
   }
 
-  .search-row .input-wrap svg {
+  .input-wrap svg {
     position: absolute;
     left: 14px;
     top: 50%;
@@ -148,10 +110,10 @@
   }
 
   input[type="text"] {
-    padding: 13px 14px 13px 40px;
-    border: none;
+    padding: 12px 14px 12px 40px;
+    border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    font-size: 0.98rem;
+    font-size: 0.92rem;
     background: #fff;
     color: var(--text);
     width: 100%;
@@ -159,55 +121,32 @@
 
   input:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.45);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-tint);
   }
 
   button#searchBtn {
     cursor: pointer;
     border: none;
     border-radius: var(--radius-sm);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 700;
-    padding: 0 24px;
-    background: #fff;
-    color: var(--primary);
-    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    padding: 0 22px;
+    background: var(--primary);
+    color: #fff;
+    transition: background 0.15s ease;
     white-space: nowrap;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
   }
 
-  button#searchBtn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,0,0,0.18); }
-  button#searchBtn:active { transform: translateY(0); }
-  button#searchBtn:disabled {
-    background: rgba(255, 255, 255, 0.6);
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-  }
-
-  .hint-chip-row {
-    position: relative;
-    display: flex;
-    gap: 8px;
-    margin-top: 12px;
-    flex-wrap: wrap;
-  }
-
-  .hint-chip {
-    font-size: 0.76rem;
-    color: rgba(255, 255, 255, 0.85);
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 999px;
-    padding: 4px 11px;
-  }
+  button#searchBtn:hover { background: var(--primary-dark); }
+  button#searchBtn:disabled { background: var(--text-faint); cursor: not-allowed; }
 
   .status {
-    margin-top: 14px;
-    font-size: 0.88rem;
-    line-height: 1.5;
+    margin-bottom: 16px;
+    font-size: 0.86rem;
   }
 
   .status.error {
@@ -219,13 +158,13 @@
     box-shadow: var(--shadow);
   }
 
-  /* ---------- Empty / loading / not-found states ---------- */
+  /* ---------- Empty / loading / not-found ---------- */
   .state-card {
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    padding: 44px 28px;
+    padding: 48px 28px;
     text-align: center;
   }
 
@@ -241,67 +180,10 @@
     justify-content: center;
   }
 
-  .state-card .title {
-    font-size: 1.05rem;
-    font-weight: 700;
-    margin: 0 0 6px;
-  }
+  .state-card.not-found .icon-ring { background: var(--danger-bg); color: var(--danger); }
 
-  .state-card .desc {
-    font-size: 0.88rem;
-    color: var(--text-muted);
-    margin: 0 auto 22px;
-    max-width: 40ch;
-  }
-
-  .feature-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    text-align: left;
-    margin-top: 8px;
-  }
-
-  @media (max-width: 560px) {
-    .feature-row { grid-template-columns: 1fr; }
-  }
-
-  .feature-item {
-    background: var(--card-bg-subtle);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 14px;
-  }
-
-  .feature-item .f-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-    background: var(--primary-tint);
-    color: var(--primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 8px;
-  }
-
-  .feature-item .f-title {
-    font-size: 0.82rem;
-    font-weight: 700;
-    margin: 0 0 2px;
-  }
-
-  .feature-item .f-desc {
-    font-size: 0.76rem;
-    color: var(--text-muted);
-    margin: 0;
-    line-height: 1.4;
-  }
-
-  .state-card.not-found .icon-ring {
-    background: var(--danger-bg);
-    color: var(--danger);
-  }
+  .state-card .title { font-size: 1.05rem; font-weight: 700; margin: 0 0 6px; }
+  .state-card .desc { font-size: 0.86rem; color: var(--text-muted); margin: 0 auto; max-width: 42ch; }
 
   .skeleton-card {
     background: var(--card-bg);
@@ -325,52 +207,58 @@
     100% { background-position: 0 50%; }
   }
 
-  /* ---------- Result card ---------- */
-  .result-card {
+  /* ---------- Dashboard layout ---------- */
+  .dashboard {
+    display: grid;
+    grid-template-columns: 1fr 290px;
+    gap: 18px;
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    .dashboard { grid-template-columns: 1fr; }
+  }
+
+  .dashboard-main, .dashboard-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 0;
+  }
+
+  .card {
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    overflow: hidden;
   }
 
-  .result-header {
-    background: linear-gradient(135deg, #f5f3ff 0%, #eef0fe 100%);
-    padding: 22px 24px;
-    border-bottom: 1px solid var(--border);
-  }
+  /* ---------- Item header card ---------- */
+  .item-card { padding: 20px 22px; }
 
-  .result-header .top-row {
+  .item-card-row {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 12px;
+    gap: 16px;
     flex-wrap: wrap;
   }
 
-  .result-header .item-name {
-    font-size: 1.3rem;
-    font-weight: 800;
-    margin: 0 0 6px;
-    letter-spacing: -0.01em;
-  }
+  .item-card-left { display: flex; align-items: flex-start; gap: 14px; }
 
-  .result-header .item-meta {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-  }
+  .item-card-left .icon-badge { width: 46px; height: 46px; }
 
-  .result-header .item-meta .mono {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  }
+  .item-title-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+  .item-title-row h2 { font-size: 1.25rem; margin: 0; font-weight: 800; letter-spacing: -0.01em; }
 
   .pill {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    font-size: 0.74rem;
+    font-size: 0.72rem;
     font-weight: 700;
-    padding: 5px 12px;
+    padding: 4px 11px;
     border-radius: 999px;
     white-space: nowrap;
   }
@@ -379,154 +267,302 @@
   .pill.status-inactive { background: var(--danger-bg); color: var(--danger); }
   .pill .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
-  .stat-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-top: 18px;
+  .item-sub { font-size: 0.82rem; color: var(--text-muted); margin: 4px 0 0; }
+  .item-sub .matched-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--blue-bg);
+    color: var(--blue);
+    font-weight: 700;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-left: 8px;
   }
 
-  @media (max-width: 560px) {
-    .stat-row { grid-template-columns: 1fr 1fr; }
+  .sync-info { text-align: right; }
+  .sync-info .sync-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: flex-end;
+    font-size: 0.76rem;
+    color: var(--text-faint);
+    margin: 0;
+  }
+  .sync-info .sync-time { font-size: 0.84rem; color: var(--text-muted); margin: 3px 0 0; font-weight: 600; }
+
+  /* ---------- Stat tiles ---------- */
+  .stat-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  @media (max-width: 700px) {
+    .stat-grid-4 { grid-template-columns: 1fr 1fr; }
   }
 
   .stat-tile {
-    background: #fff;
+    background: var(--card-bg);
     border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 12px 14px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
   }
 
-  .stat-tile .stat-label {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--text-faint);
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
-
-  .stat-tile .stat-value {
-    font-size: 1.15rem;
-    font-weight: 800;
-    color: var(--text);
-  }
-
-  .section-title {
+  .stat-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 16px 24px 8px;
-    font-size: 0.78rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--primary);
+    justify-content: center;
+    flex-shrink: 0;
   }
 
-  .section-title svg { flex-shrink: 0; }
+  .stat-icon.purple { background: var(--primary-tint); color: var(--primary); }
+  .stat-icon.green { background: var(--success-bg); color: var(--success); }
+  .stat-icon.blue { background: var(--blue-bg); color: var(--blue); }
+  .stat-icon.amber { background: var(--amber-bg); color: var(--amber); }
+
+  .stat-tile .stat-label { font-size: 0.76rem; color: var(--text-muted); margin: 0 0 3px; }
+  .stat-tile .stat-value { font-size: 1.15rem; font-weight: 800; color: var(--text); word-break: break-word; }
+  .stat-tile .stat-caption { font-size: 0.7rem; color: var(--text-faint); margin: 2px 0 0; }
+
+  /* ---------- Tabs ---------- */
+  .tab-card { overflow: hidden; }
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+    padding: 6px;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+
+  .tab {
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    padding: 9px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  .tab:hover { background: var(--card-bg-subtle); color: var(--text); }
+  .tab.active { background: var(--primary-tint); color: var(--primary); }
+
+  .tab-panel { padding: 20px 22px 22px; }
+  .tab-panel[hidden] { display: none; }
+
+  .panel-head { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; }
+  .panel-head .icon-ring {
+    width: 30px; height: 30px; border-radius: 9px;
+    background: var(--primary-tint); color: var(--primary);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .panel-head h3 { font-size: 0.98rem; margin: 0; font-weight: 700; }
+  .panel-head p { font-size: 0.8rem; color: var(--text-muted); margin: 2px 0 0; }
 
   .detail-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 24px;
   }
 
-  @media (max-width: 560px) {
+  @media (max-width: 640px) {
     .detail-grid { grid-template-columns: 1fr; }
   }
 
-  .detail-item {
-    padding: 8px 24px 12px;
+  .detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--card-bg-subtle);
+    font-size: 0.86rem;
   }
 
-  .detail-item .label {
-    font-size: 0.73rem;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    color: var(--text-faint);
-    margin-bottom: 3px;
-    font-weight: 600;
+  .detail-row .d-label { color: var(--text-muted); }
+  .detail-row .d-value { color: var(--text); font-weight: 600; text-align: right; word-break: break-word; }
+  .detail-row .d-value.empty { color: var(--text-faint); font-weight: 400; }
+
+  .bool-pill {
+    display: inline-flex;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 999px;
+  }
+  .bool-pill.yes { background: var(--success-bg); color: var(--success); }
+  .bool-pill.no { background: var(--danger-bg); color: var(--danger); }
+
+  .two-col-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
   }
 
-  .detail-item .value {
-    font-size: 0.9rem;
-    word-break: break-word;
-    color: var(--text);
+  @media (max-width: 900px) {
+    .two-col-cards { grid-template-columns: 1fr; }
   }
 
-  .detail-item .value.empty {
-    color: var(--text-faint);
-  }
+  .stock-bar-wrap { margin: 10px 0 16px; }
+  .stock-bar-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .stock-bar-top .label { font-size: 0.8rem; color: var(--text-muted); }
+  .stock-bar-top .pill { }
+  .stock-bar-value { font-size: 1.4rem; font-weight: 800; margin: 0 0 8px; }
+  .stock-bar-track { height: 8px; border-radius: 999px; background: var(--card-bg-subtle); overflow: hidden; }
+  .stock-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #7c3aed); border-radius: 999px; }
+  .stock-bar-scale { font-size: 0.72rem; color: var(--text-faint); text-align: right; margin-top: 4px; }
 
-  .detail-item .value pre {
+  .mini-stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .mini-stat { background: var(--card-bg-subtle); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; }
+  .mini-stat .mini-label { font-size: 0.72rem; color: var(--text-faint); margin: 0 0 3px; }
+  .mini-stat .mini-value { font-size: 0.98rem; font-weight: 700; }
+
+  pre.raw-json {
     margin: 0;
     white-space: pre-wrap;
-    font-size: 0.76rem;
+    word-break: break-word;
+    font-size: 0.78rem;
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     background: var(--card-bg-subtle);
     border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    max-height: 480px;
+    overflow: auto;
   }
 
-  .result-footer {
-    padding: 14px 24px 20px;
+  /* ---------- Sidebar ---------- */
+  .side-card { padding: 16px 18px; }
+
+  .side-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.86rem;
+    font-weight: 700;
+    margin: 0 0 12px;
   }
+
+  .side-title svg { color: var(--primary); }
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    border: 1px solid var(--border);
+    background: var(--card-bg-subtle);
+    color: var(--text);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 8px;
+    text-decoration: none;
+    box-sizing: border-box;
+  }
+
+  .action-btn:last-child { margin-bottom: 0; }
+  .action-btn:hover { background: #eef0f5; }
+
+  .action-btn.primary {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+  }
+  .action-btn.primary:hover { background: var(--primary-dark); }
+
+  .side-meta-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.76rem;
+    color: var(--text-faint);
+    margin: 14px 0 3px;
+  }
+  .side-meta-value { font-size: 0.86rem; font-weight: 600; }
 
   .spinner {
     display: inline-block;
     width: 14px;
     height: 14px;
-    border: 2px solid rgba(79, 70, 229, 0.25);
-    border-top-color: var(--primary);
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
     vertical-align: -2px;
   }
 
-  button#searchBtn .spinner {
-    border: 2px solid rgba(79, 70, 229, 0.25);
+  .spinner.dark {
+    border: 2px solid var(--border);
     border-top-color: var(--primary);
   }
 
-  @keyframes spin {
-    to { transform: rotate(360deg); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    background: var(--text);
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 999px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 50;
   }
 
-  .footer-note {
-    text-align: center;
-    color: var(--text-faint);
-    font-size: 0.76rem;
-    margin-top: 24px;
-  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(-8px); }
 </style>
 </head>
 <body>
 <div class="container">
-
-  <div class="hero">
-    <div class="hero-top">
-      <span class="hero-icon" aria-hidden="true">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73z"></path><polyline points="3.29 7 12 12 20.71 7"></polyline><line x1="12" y1="22" x2="12" y2="12"></line></svg>
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="icon-badge" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73z"></path><polyline points="3.29 7 12 12 20.71 7"></polyline><line x1="12" y1="22" x2="12" y2="12"></line></svg>
       </span>
-      <h1>Zoho Item Lookup</h1>
-    </div>
-    <p class="tagline">Look up any item in Zoho Books by its item number and see everything about it — pricing, stock, tax, and more — in one place.</p>
-
-    <div class="search-box">
-      <div class="search-row">
-        <div class="input-wrap">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          <input type="text" id="itemNumber" placeholder="Item name" autocomplete="off" />
-        </div>
-        <button id="searchBtn">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          Search
-        </button>
+      <div>
+        <h1>Zoho Item Lookup</h1>
+        <p class="subtitle">Search and view item details from Zoho Books</p>
       </div>
     </div>
-    <div id="status"></div>
+    <div class="topbar-search">
+      <div class="input-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="itemNumber" placeholder="Item name, SKU, or serial number" autocomplete="off" />
+      </div>
+      <button id="searchBtn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        Search
+      </button>
+    </div>
   </div>
+
+  <div id="status"></div>
 
   <div id="resultArea">
     <div class="state-card">
@@ -534,29 +570,11 @@
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
       </div>
       <p class="title">Search for an item to get started</p>
-      <p class="desc">Enter an item name above and hit Search — full details from Zoho Books will show up right here.</p>
-
-      <div class="feature-row">
-        <div class="feature-item">
-          <div class="f-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"></path></svg></div>
-          <p class="f-title">Live data</p>
-          <p class="f-desc">Pulled straight from Zoho Books, every search.</p>
-        </div>
-        <div class="feature-item">
-          <div class="f-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg></div>
-          <p class="f-title">Full detail</p>
-          <p class="f-desc">Pricing, tax, stock and more — organized clearly.</p>
-        </div>
-        <div class="feature-item">
-          <div class="f-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
-          <p class="f-title">Instant</p>
-          <p class="f-desc">Results in a second or two, no digging in Zoho.</p>
-        </div>
-      </div>
+      <p class="desc">Enter an item name, SKU, or serial number above and hit Search — full details from Zoho Books will show up right here.</p>
     </div>
   </div>
 
-  <p class="footer-note">Connected to Zoho Books · Data refreshes on every search</p>
+  <div class="toast" id="toast"></div>
 </div>
 
 <script>
@@ -566,9 +584,29 @@
     searchBtn: document.getElementById('searchBtn'),
     status: document.getElementById('status'),
     resultArea: document.getElementById('resultArea'),
+    toast: document.getElementById('toast'),
   };
 
   const SEARCH_ICON_SVG = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
+
+  const ICONS = {
+    cube: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73z"></path><polyline points="3.29 7 12 12 20.71 7"></polyline><line x1="12" y1="22" x2="12" y2="12"></line></svg>',
+    tag: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2.59 12.58V2h10.58l8 8a2 2 0 0 1 0 2.83z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>',
+    box: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73z"></path><polyline points="3.29 7 12 12 20.71 7"></polyline><line x1="12" y1="22" x2="12" y2="12"></line></svg>',
+    layers: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>',
+    coin: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M14.5 9.5c0-1-1-1.5-2.5-1.5s-2.5.6-2.5 1.5 1 1.3 2.5 1.5 2.5.6 2.5 1.5-1 1.5-2.5 1.5-2.5-.5-2.5-1.5"></path><line x1="12" y1="6.5" x2="12" y2="7.5"></line><line x1="12" y1="16.5" x2="12" y2="17.5"></line></svg>',
+    info: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>',
+    id: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2.59 12.58V2h10.58l8 8a2 2 0 0 1 0 2.83z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>',
+    raw: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>',
+    refresh: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>',
+    copy: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>',
+    external: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>',
+    calendar: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>',
+    bolt: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>',
+    ruler: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18M9 21V9"></path></svg>',
+  };
+
+  let lastQuery = '';
 
   function setStatus(message, type) {
     els.status.innerHTML = '';
@@ -577,6 +615,12 @@
     div.className = 'status' + (type ? ' ' + type : '');
     div.textContent = message;
     els.status.appendChild(div);
+  }
+
+  function showToast(msg) {
+    els.toast.textContent = msg;
+    els.toast.classList.add('show');
+    setTimeout(() => els.toast.classList.remove('show'), 1600);
   }
 
   function setLoading(isLoading) {
@@ -595,176 +639,315 @@
   }
 
   function titleCase(key) {
-    return key
-      .replace(/_/g, ' ')
-      .replace(/\b\w/g, c => c.toUpperCase());
+    return key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   }
 
-  function formatValue(value) {
-    if (value === null || value === undefined || value === '') return { text: '—', empty: true };
-    if (typeof value === 'boolean') return { text: value ? 'Yes' : 'No', empty: false };
-    if (Array.isArray(value)) {
-      if (value.length === 0) return { text: '—', empty: true };
-      if (value.every(v => typeof v !== 'object')) return { text: value.join(', '), empty: false };
-      return { text: JSON.stringify(value, null, 2), empty: false, pre: true };
-    }
-    if (typeof value === 'object') {
-      const keys = Object.keys(value);
-      if (keys.length === 0) return { text: '—', empty: true };
-      return { text: JSON.stringify(value, null, 2), empty: false, pre: true };
-    }
-    return { text: String(value), empty: false };
+  function formatCurrency(value) {
+    const num = Number(value);
+    if (isNaN(num)) return String(value);
+    return '₹' + num.toLocaleString('en-IN');
   }
 
   function formatDate(value) {
-    if (!value) return { text: '—', empty: true };
+    if (!value) return '—';
     const d = new Date(value);
-    if (isNaN(d.getTime())) return { text: String(value), empty: false };
-    return { text: d.toLocaleString(), empty: false };
+    if (isNaN(d.getTime())) return String(value);
+    return d.toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
   }
 
-  // Fields excluded entirely: internal ids/noise, or already shown in the header/stat row.
-  const SKIP_FIELDS = new Set([
-    'custom_field_hash', 'item_id', 'name', 'item_name', 'sku', 'status',
-    'rate', 'stock_on_hand', 'group_id', 'zcrm_product_id', 'crm_owner_id',
-    'is_linked_with_zohocrm', 'item_code', 'lock_details', 'lock_detail',
-    'locked_actions', 'locked_fields',
-  ]);
+  function fmt(value) {
+    if (value === null || value === undefined || value === '') return { text: '—', empty: true };
+    return { text: String(value), empty: false };
+  }
 
-  const ICONS = {
-    General: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>',
-    'Pricing & Tax': '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>',
-    'Inventory & Stock': '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73z"></path><polyline points="3.29 7 12 12 20.71 7"></polyline><line x1="12" y1="22" x2="12" y2="12"></line></svg>',
-    Identifiers: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2.59 12.58V2h10.58l8 8a2 2 0 0 1 0 2.83z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>',
-    'Dimensions & Weight': '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18M9 21V9"></path></svg>',
-    Other: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle></svg>',
-    'Additional Details': '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>',
-  };
-
-  const FIELD_GROUPS = [
-    { title: 'General', keys: ['description', 'brand', 'manufacturer', 'unit', 'item_type', 'product_type', 'hsn_or_sac', 'source'] },
-    { title: 'Pricing & Tax', keys: ['purchase_rate', 'is_taxable', 'tax_name', 'tax_percentage', 'tax_exemption_code', 'tax_category_name', 'purchase_account_name', 'account_name'] },
-    { title: 'Inventory & Stock', keys: ['track_inventory', 'available_stock', 'actual_available_stock', 'available_for_sale', 'reorder_level', 'track_serial_number', 'track_batch_number'] },
-    { title: 'Identifiers', keys: ['upc', 'ean', 'isbn', 'part_number'] },
-    { title: 'Dimensions & Weight', keys: ['dimensions_with_unit', 'weight_with_unit', 'length', 'width', 'height', 'weight'] },
-    { title: 'Other', keys: ['can_be_sold', 'can_be_purchased', 'is_returnable', 'is_combo_product', 'vendor_name', 'purpose_of_use', 'tags', 'created_time', 'last_modified_time'] },
-  ];
-
-  const DATE_FIELDS = new Set(['created_time', 'last_modified_time']);
-
-  function buildDetailItem(key, val) {
-    const formatted = DATE_FIELDS.has(key) ? formatDate(val) : formatValue(val);
-    const wrap = document.createElement('div');
-    wrap.className = 'detail-item';
+  function buildDetailRow(key, val, opts) {
+    opts = opts || {};
+    const row = document.createElement('div');
+    row.className = 'detail-row';
 
     const label = document.createElement('div');
-    label.className = 'label';
-    label.textContent = titleCase(key);
+    label.className = 'd-label';
+    label.textContent = opts.label || titleCase(key);
 
     const value = document.createElement('div');
-    value.className = 'value' + (formatted.empty ? ' empty' : '');
-    if (formatted.pre) {
-      const pre = document.createElement('pre');
-      pre.textContent = formatted.text;
-      value.appendChild(pre);
+    value.className = 'd-value';
+
+    if (typeof val === 'boolean') {
+      const pill = document.createElement('span');
+      pill.className = 'bool-pill ' + (val ? 'yes' : 'no');
+      pill.textContent = val ? 'Yes' : 'No';
+      value.appendChild(pill);
+    } else if (opts.date) {
+      value.textContent = formatDate(val);
+    } else if (opts.currency && val !== '' && val !== null && val !== undefined) {
+      value.textContent = formatCurrency(val);
     } else {
+      const formatted = fmt(val);
       value.textContent = formatted.text;
+      if (formatted.empty) value.classList.add('empty');
     }
 
-    wrap.appendChild(label);
-    wrap.appendChild(value);
+    row.appendChild(label);
+    row.appendChild(value);
+    return row;
+  }
+
+  function buildGrid(rows) {
+    const grid = document.createElement('div');
+    grid.className = 'detail-grid';
+    rows.forEach(r => grid.appendChild(r));
+    return grid;
+  }
+
+  function panelHead(icon, title, desc) {
+    const wrap = document.createElement('div');
+    wrap.className = 'panel-head';
+    wrap.innerHTML =
+      '<span class="icon-ring">' + icon + '</span>' +
+      '<div><h3>' + title + '</h3><p>' + desc + '</p></div>';
     return wrap;
   }
 
-  function buildSection(title, keys, item) {
-    const present = keys.filter(k => Object.prototype.hasOwnProperty.call(item, k));
-    if (present.length === 0) return null;
-
-    const fragment = document.createDocumentFragment();
-
-    const heading = document.createElement('div');
-    heading.className = 'section-title';
-    heading.innerHTML = (ICONS[title] || '') + '<span>' + title + '</span>';
-    fragment.appendChild(heading);
-
-    const grid = document.createElement('div');
-    grid.className = 'detail-grid';
-    present.forEach(key => grid.appendChild(buildDetailItem(key, item[key])));
-    fragment.appendChild(grid);
-
-    return fragment;
+  function keyRow(item, key, opts) {
+    return buildDetailRow(key, item[key], opts);
   }
 
-  function buildStatTile(label, value) {
-    const tile = document.createElement('div');
-    tile.className = 'stat-tile';
-    const l = document.createElement('div');
-    l.className = 'stat-label';
-    l.textContent = label;
-    const v = document.createElement('div');
-    v.className = 'stat-value';
-    v.textContent = value;
-    tile.appendChild(l);
-    tile.appendChild(v);
-    return tile;
+  function buildOverviewPanel(item) {
+    const panel = document.createElement('div');
+    panel.appendChild(panelHead(ICONS.info, 'Overview', 'Basic information about this item from Zoho Books.'));
+
+    const rows = [
+      keyRow(item, 'description'), keyRow(item, 'brand'), keyRow(item, 'manufacturer'),
+      keyRow(item, 'unit'), keyRow(item, 'item_type'), keyRow(item, 'product_type'),
+      keyRow(item, 'hsn_or_sac', { label: 'HSN or SAC' }), keyRow(item, 'source'),
+      keyRow(item, 'tax_exemption_code'), keyRow(item, 'tax_category_name'),
+      keyRow(item, 'purchase_account_name'), keyRow(item, 'account_name'),
+      keyRow(item, 'can_be_sold'), keyRow(item, 'can_be_purchased'),
+      keyRow(item, 'is_returnable'), keyRow(item, 'is_combo_product'),
+      keyRow(item, 'purpose_of_use'),
+    ];
+    panel.appendChild(buildGrid(rows));
+    return panel;
   }
 
-  function renderItem(item) {
-    els.resultArea.innerHTML = '';
+  function buildInventoryPanel(item) {
+    const panel = document.createElement('div');
+    panel.appendChild(panelHead(ICONS.box, 'Inventory & Stock', 'Track inventory levels and stock information.'));
 
-    const card = document.createElement('div');
-    card.className = 'result-card';
-
-    const header = document.createElement('div');
-    header.className = 'result-header';
-
-    const topRow = document.createElement('div');
-    topRow.className = 'top-row';
+    const twoCol = document.createElement('div');
+    twoCol.className = 'two-col-cards';
 
     const left = document.createElement('div');
-    const name = document.createElement('p');
-    name.className = 'item-name';
-    name.textContent = item.name || item.item_name || 'Unnamed Item';
-    const meta = document.createElement('div');
-    meta.className = 'item-meta';
-    meta.innerHTML = 'SKU <span class="mono">' + (item.sku || '—') + '</span> &nbsp;·&nbsp; ID <span class="mono">' + (item.item_id || '—') + '</span>';
-    left.appendChild(name);
-    left.appendChild(meta);
-    topRow.appendChild(left);
+    left.appendChild(buildGrid([
+      keyRow(item, 'track_inventory'),
+      keyRow(item, 'track_serial_number'),
+      keyRow(item, 'track_batch_number'),
+      keyRow(item, 'reorder_level'),
+    ]));
 
-    if (item.status) {
-      const isActive = String(item.status).toLowerCase() === 'active';
-      const pill = document.createElement('span');
-      pill.className = 'pill ' + (isActive ? 'status-active' : 'status-inactive');
-      pill.innerHTML = '<span class="dot"></span>' + titleCase(item.status);
-      topRow.appendChild(pill);
-    }
+    const right = document.createElement('div');
+    const available = Number(item.available_stock) || 0;
+    const initial = Number(item.initial_stock) || 0;
+    const total = Math.max(available, initial, 1);
+    const pct = Math.min(100, Math.round((available / total) * 100));
 
-    header.appendChild(topRow);
+    const barWrap = document.createElement('div');
+    barWrap.className = 'stock-bar-wrap';
+    barWrap.innerHTML =
+      '<div class="stock-bar-top"><span class="label">Available Stock</span>' +
+      '<span class="pill ' + (available > 0 ? 'status-active' : 'status-inactive') + '"><span class="dot"></span>' + (available > 0 ? 'In Stock' : 'Out of Stock') + '</span></div>' +
+      '<p class="stock-bar-value">' + available + '</p>' +
+      '<div class="stock-bar-track"><div class="stock-bar-fill" style="width:' + pct + '%"></div></div>' +
+      '<p class="stock-bar-scale">' + available + ' / ' + total + '</p>';
+    right.appendChild(barWrap);
 
-    const statRow = document.createElement('div');
-    statRow.className = 'stat-row';
-    statRow.appendChild(buildStatTile('Rate', item.rate !== undefined && item.rate !== null && item.rate !== '' ? item.rate : '—'));
-    statRow.appendChild(buildStatTile('Stock on Hand', item.stock_on_hand !== undefined && item.stock_on_hand !== null && item.stock_on_hand !== '' ? item.stock_on_hand : '—'));
-    statRow.appendChild(buildStatTile('Type', item.item_type ? titleCase(item.item_type) : '—'));
-    header.appendChild(statRow);
+    const miniRow = document.createElement('div');
+    miniRow.className = 'mini-stat-row';
+    miniRow.innerHTML =
+      '<div class="mini-stat"><p class="mini-label">Initial Stock</p><p class="mini-value">' + (fmt(item.initial_stock).text) + '</p></div>' +
+      '<div class="mini-stat"><p class="mini-label">Committed Stock</p><p class="mini-value">' + (fmt(item.committed_stock).text) + '</p></div>';
+    right.appendChild(miniRow);
 
-    card.appendChild(header);
+    twoCol.appendChild(right);
+    twoCol.appendChild(left);
+    panel.appendChild(twoCol);
+    return panel;
+  }
 
-    const usedKeys = new Set(SKIP_FIELDS);
-    FIELD_GROUPS.forEach(group => {
-      const section = buildSection(group.title, group.keys, item);
-      group.keys.forEach(k => usedKeys.add(k));
-      if (section) card.appendChild(section);
+  function buildPricingPanel(item) {
+    const panel = document.createElement('div');
+    panel.appendChild(panelHead(ICONS.tag, 'Pricing & Tax', 'Pricing and tax configuration for this item.'));
+    const rows = [
+      keyRow(item, 'rate', { label: 'Sales Rate', currency: true }),
+      keyRow(item, 'pricebook_rate', { label: 'Pricebook Rate', currency: true }),
+      keyRow(item, 'pricing_scheme', { label: 'Pricing Scheme' }),
+      keyRow(item, 'sales_margin', { label: 'Sales Margin' }),
+      keyRow(item, 'tax_category_code', { label: 'Tax Category Code' }),
+      keyRow(item, 'tax_category_name', { label: 'Tax Category Name' }),
+      keyRow(item, 'tax_percentage', { label: 'GST Rate' }),
+      keyRow(item, 'taxability_type', { label: 'Taxability Type' }),
+      keyRow(item, 'is_taxable'),
+      keyRow(item, 'purchase_rate', { currency: true }),
+    ];
+    panel.appendChild(buildGrid(rows));
+    return panel;
+  }
+
+  function buildIdentifiersPanel(item) {
+    const panel = document.createElement('div');
+    panel.appendChild(panelHead(ICONS.id, 'Identifiers', 'Codes used to identify this item externally.'));
+    const rows = [
+      keyRow(item, 'upc', { label: 'UPC' }), keyRow(item, 'ean', { label: 'EAN' }),
+      keyRow(item, 'isbn', { label: 'ISBN' }), keyRow(item, 'part_number'),
+    ];
+    panel.appendChild(buildGrid(rows));
+    return panel;
+  }
+
+  function buildOtherPanel(item) {
+    const panel = document.createElement('div');
+    panel.appendChild(panelHead(ICONS.layers, 'Other Details', 'Dimensions, weight, and everything else on record.'));
+    const rows = [
+      keyRow(item, 'dimensions_with_unit', { label: 'Dimensions' }),
+      keyRow(item, 'weight_with_unit', { label: 'Weight' }),
+      keyRow(item, 'length'), keyRow(item, 'width'), keyRow(item, 'height'),
+      keyRow(item, 'vendor_name'),
+      keyRow(item, 'created_time', { label: 'Created Time', date: true }),
+      keyRow(item, 'last_modified_time', { label: 'Last Modified', date: true }),
+    ];
+    panel.appendChild(buildGrid(rows));
+    return panel;
+  }
+
+  function buildRawPanel(item) {
+    const panel = document.createElement('div');
+    panel.appendChild(panelHead(ICONS.raw, 'Raw Data', 'The complete, unfiltered item record from Zoho Books.'));
+    const pre = document.createElement('pre');
+    pre.className = 'raw-json';
+    pre.textContent = JSON.stringify(item, null, 2);
+    panel.appendChild(pre);
+    return panel;
+  }
+
+  const TABS = [
+    { key: 'overview', label: 'Overview', icon: ICONS.info, build: buildOverviewPanel },
+    { key: 'inventory', label: 'Inventory', icon: ICONS.box, build: buildInventoryPanel },
+    { key: 'pricing', label: 'Pricing & Tax', icon: ICONS.tag, build: buildPricingPanel },
+    { key: 'identifiers', label: 'Identifiers', icon: ICONS.id, build: buildIdentifiersPanel },
+    { key: 'other', label: 'Other Details', icon: ICONS.layers, build: buildOtherPanel },
+    { key: 'raw', label: 'Raw Data', icon: '{}', build: buildRawPanel },
+  ];
+
+  function renderItem(item, meta) {
+    els.resultArea.innerHTML = '';
+
+    const dash = document.createElement('div');
+    dash.className = 'dashboard';
+
+    const main = document.createElement('div');
+    main.className = 'dashboard-main';
+
+    // --- Item header card ---
+    const isActive = String(item.status).toLowerCase() === 'active';
+    const itemCard = document.createElement('div');
+    itemCard.className = 'card item-card';
+    itemCard.innerHTML =
+      '<div class="item-card-row">' +
+        '<div class="item-card-left">' +
+          '<span class="icon-badge">' + ICONS.cube + '</span>' +
+          '<div>' +
+            '<div class="item-title-row"><h2>' + (item.name || item.item_name || 'Unnamed Item') + '</h2>' +
+              '<span class="pill ' + (isActive ? 'status-active' : 'status-inactive') + '"><span class="dot"></span>' + titleCase(item.status || 'unknown') + '</span></div>' +
+            '<p class="item-sub">SKU: ' + (item.sku || '—') + ' &nbsp;|&nbsp; Item ID: ' + (item.item_id || '—') +
+              (meta.matched_by === 'serial_number' ? '<span class="matched-badge">Matched by serial number</span>' : '') +
+            '</p>' +
+          '</div>' +
+        '</div>' +
+        '<div class="sync-info">' +
+          '<p class="sync-label">' + ICONS.refresh + ' Last synced</p>' +
+          '<p class="sync-time">' + new Date().toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }) + '</p>' +
+        '</div>' +
+      '</div>';
+    main.appendChild(itemCard);
+
+    // --- Stat tiles ---
+    const stockValue = (Number(item.rate) || 0) * (Number(item.available_stock) || 0);
+    const statGrid = document.createElement('div');
+    statGrid.className = 'stat-grid-4';
+    statGrid.innerHTML =
+      '<div class="stat-tile"><span class="stat-icon purple">' + ICONS.tag + '</span><div><p class="stat-label">Sales Rate</p><p class="stat-value">' + formatCurrency(item.rate || 0) + '</p></div></div>' +
+      '<div class="stat-tile"><span class="stat-icon green">' + ICONS.box + '</span><div><p class="stat-label">Available Stock</p><p class="stat-value">' + fmt(item.available_stock).text + '</p></div></div>' +
+      '<div class="stat-tile"><span class="stat-icon blue">' + ICONS.layers + '</span><div><p class="stat-label">Item Type</p><p class="stat-value">' + titleCase(item.item_type || '—') + '</p></div></div>' +
+      '<div class="stat-tile"><span class="stat-icon amber">' + ICONS.coin + '</span><div><p class="stat-label">Stock Value</p><p class="stat-value">' + formatCurrency(stockValue) + '</p><p class="stat-caption">(' + fmt(item.available_stock).text + ' × ' + formatCurrency(item.rate || 0) + ')</p></div></div>';
+    main.appendChild(statGrid);
+
+    // --- Tabs ---
+    const tabCard = document.createElement('div');
+    tabCard.className = 'card tab-card';
+
+    const tabBar = document.createElement('div');
+    tabBar.className = 'tabs';
+
+    const panelsWrap = document.createElement('div');
+
+    TABS.forEach((tab, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'tab' + (i === 0 ? ' active' : '');
+      btn.innerHTML = tab.icon + '<span>' + tab.label + '</span>';
+      btn.addEventListener('click', () => {
+        tabBar.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        panelsWrap.querySelectorAll('.tab-panel').forEach(p => p.hidden = true);
+        panelsWrap.querySelector('[data-panel="' + tab.key + '"]').hidden = false;
+      });
+      tabBar.appendChild(btn);
+
+      const panel = document.createElement('div');
+      panel.className = 'tab-panel';
+      panel.dataset.panel = tab.key;
+      if (i !== 0) panel.hidden = true;
+      panel.appendChild(tab.build(item));
+      panelsWrap.appendChild(panel);
     });
 
-    const leftoverKeys = Object.keys(item).filter(k => !usedKeys.has(k));
-    const leftoverSection = buildSection('Additional Details', leftoverKeys, item);
-    if (leftoverSection) card.appendChild(leftoverSection);
+    tabCard.appendChild(tabBar);
+    tabCard.appendChild(panelsWrap);
+    main.appendChild(tabCard);
 
-    card.appendChild(document.createElement('div')).className = 'result-footer';
+    dash.appendChild(main);
 
-    els.resultArea.appendChild(card);
+    // --- Sidebar ---
+    const sidebar = document.createElement('div');
+    sidebar.className = 'dashboard-sidebar';
+
+    const quickActions = document.createElement('div');
+    quickActions.className = 'card side-card';
+    const viewUrl = meta.organization_id
+      ? 'https://books.zoho.com/app/' + meta.organization_id + '#/inventory/items/' + item.item_id
+      : '#';
+    quickActions.innerHTML =
+      '<p class="side-title">' + ICONS.bolt + ' Quick Actions</p>' +
+      '<button class="action-btn" id="copyIdBtn">' + ICONS.copy + ' Copy Item ID</button>' +
+      '<button class="action-btn" id="refreshBtn">' + ICONS.refresh + ' Refresh from Zoho Books</button>' +
+      '<a class="action-btn primary" href="' + viewUrl + '" target="_blank" rel="noopener">' + ICONS.external + ' View in Zoho Books</a>';
+    sidebar.appendChild(quickActions);
+
+    const statusCard = document.createElement('div');
+    statusCard.className = 'card side-card';
+    statusCard.innerHTML =
+      '<p class="side-title">Item Status</p>' +
+      '<span class="pill ' + (isActive ? 'status-active' : 'status-inactive') + '"><span class="dot"></span>' + titleCase(item.status || 'unknown') + '</span>' +
+      '<p class="side-meta-label">' + ICONS.calendar + ' Created Time</p>' +
+      '<p class="side-meta-value">' + formatDate(item.created_time) + '</p>';
+    sidebar.appendChild(statusCard);
+
+    dash.appendChild(sidebar);
+    els.resultArea.appendChild(dash);
+
+    document.getElementById('copyIdBtn').addEventListener('click', () => {
+      navigator.clipboard.writeText(item.item_id || '').then(() => showToast('Item ID copied')).catch(() => showToast('Could not copy'));
+    });
+    document.getElementById('refreshBtn').addEventListener('click', () => searchItem());
   }
 
   function renderNotAvailable(query) {
@@ -776,15 +959,15 @@
       '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>' +
       '</div>' +
       '<p class="title">Item Not Available</p>' +
-      '<p class="desc">No item matching "' + query.replace(/</g, '&lt;') + '" was found in Zoho Books. Double-check the item name and try again.</p>';
+      '<p class="desc">No item matching "' + query.replace(/</g, '&lt;') + '" was found in Zoho Books. Try the item name, SKU, or a serial number.</p>';
     els.resultArea.appendChild(div);
   }
 
   async function searchItem() {
-    const itemNumber = els.itemNumber.value.trim();
+    const itemNumber = (lastQuery = els.itemNumber.value.trim());
 
     if (!itemNumber) {
-      setStatus('Please enter an Item Name to search.', 'error');
+      setStatus('Please enter an Item Name, SKU, or Serial Number to search.', 'error');
       return;
     }
 
@@ -805,7 +988,7 @@
         return;
       }
 
-      renderItem(body.item);
+      renderItem(body.item, { matched_by: body.matched_by, organization_id: body.organization_id });
     } catch (err) {
       els.resultArea.innerHTML = '';
       setStatus('Network error: ' + err.message, 'error');

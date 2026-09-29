@@ -286,7 +286,7 @@ app.get('/api/item', async (req, res) => {
     }
 
     const responseItem = (detail.body && detail.body.item) || items[0];
-    res.json({ item: responseItem, matched_by: matchedBy });
+    res.json({ item: responseItem, matched_by: matchedBy, organization_id: ZOHO_ORG_ID });
   } catch (err) {
     res.status(err.isConfigError ? 500 : 502).json({ error: err.message });
   }
